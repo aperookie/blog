@@ -42,7 +42,7 @@ function topic(k,target,sort){const POP=k=='popular';const t=POP?{key:'popular',
  app.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{topic(k,null,b.dataset.s);scrollTo(0,0)});
  POPF=POP;const feed=$('#feed'),fp=$('#fprog');let maxi=0;
  readIO=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){const el=e.target;markRead(el.dataset.id);el.classList.add('seen');maxi=Math.max(maxi,+el.dataset.i);fp.textContent=`${maxi} מתוך ${n}`;fp.classList.add('on')}}),{threshold:.5});
- const more=c=>{const s=arr.slice(shown,shown+c);feed.insertAdjacentHTML('beforeend',s.map((p,j)=>item(p,shown+j,n)).join(''));
+ const more=c=>{if(shown>=n||!$('#sent'))return;const s=arr.slice(shown,shown+c);feed.insertAdjacentHTML('beforeend',s.map((p,j)=>item(p,shown+j,n)).join(''));
   [...feed.children].slice(shown).forEach(el=>readIO.observe(el));shown+=s.length;
   if(shown>=n){feedIO.disconnect();$('#sent').outerHTML=`<section class="endcat fade" id="endcat"><div class="big">🎉</div><h2>סיימת את כל ${n} הציוצים ב${t.name}!</h2><p>רוצה להמשיך? בחר נושא הבא:</p><div class="grid">${S.topics.filter(x=>x.key!=k).map(x=>`<a class="tcard" href="#/topic/${x.key}"><span class="n">${x.count}</span><div class="ic">${x.icon}</div><h3>${x.name}</h3></a>`).join('')}</div><div class="cta"><a class="btn big" href="#/topic/${S.topics[(S.topics.findIndex(x=>x.key==k)+1)%S.topics.length].key}">לנושא הבא ←</a><a class="btn g big" href="#/">🏠 לדף הבית</a></div></section>`;new IntersectionObserver(e=>{if(e[0].isIntersecting){fp.textContent=`✓ ${n} מתוך ${n}`;arr.forEach(p=>markRead(p.id))}}).observe($('#endcat'))}};
  feedIO=new IntersectionObserver(e=>{if(e[0].isIntersecting)more(12)},{rootMargin:'1200px'});
